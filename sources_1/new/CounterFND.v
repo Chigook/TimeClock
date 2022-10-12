@@ -4,10 +4,10 @@ module CounterFND(
     input i_clk,
     input i_reset,
     
-    output [1:0] o_counter
+    output [2:0] o_counter
     );
 
-    reg [1:0] r_counter = 0;
+    reg [2:0] r_counter = 0;
     
     assign o_counter = r_counter;
 

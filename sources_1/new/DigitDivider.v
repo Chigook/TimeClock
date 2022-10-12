@@ -1,7 +1,7 @@
 `timescale 1ns / 1ps
 
 module DigitDivider(
-    input [9:0] i_a, i_b,
+    input [6:0] i_a, i_b,
 
     output [3:0] o_1a, o_10a, o_1b, o_10b
     );

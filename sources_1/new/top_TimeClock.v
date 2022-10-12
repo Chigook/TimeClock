@@ -4,13 +4,14 @@ module top_TimeClock(
     input i_clk,
     input i_reset,
     input i_mode_SW,
+    input i_en,
 
     output [3:0] o_digitPosition,
     output [7:0] o_fndfont
     );
 
     wire w_clk_1hz;
-    wire [1:0] w_counter;
+    wire [2:0] w_counter;
     wire [6:0] w_hour, w_min, w_sec, w_msec;
     wire [3:0] w_hour10, w_hour1, w_min10, w_min1;
     wire [3:0] w_sec10, w_sec1, w_msec10, w_msec1;
@@ -31,6 +32,7 @@ module top_TimeClock(
 
     DecoderFNDDigit Decoder2x4(
         .i_select(w_counter),
+        .i_en(i_en),
         .o_digitPosition(o_digitPosition)
     );
 
@@ -52,12 +54,23 @@ module top_TimeClock(
         .o_10b(w_hour10)
     );
 
-    Mux_4x1 mux_4x1_dut0(
+    wire [3:0] w_fndDP;
+
+    Comparator cmp(
+        .i_msec(w_msec),
+        .o_fndDP(w_fndDP)
+    );
+
+    Mux_8x1 mux_8x1_dut0(
         .i_a(w_min1),
         .i_b(w_min10),
         .i_c(w_hour1),
         .i_d(w_hour10),
         .i_select(w_counter),
+        .i_a1(11),
+        .i_b1(11),
+        .i_c1(w_fndDP),
+        .i_d1(11),
         .o_y(w_y0)
     );
 
@@ -70,12 +83,17 @@ module top_TimeClock(
         .o_10b(w_sec10)
     );
 
-    Mux_4x1 mux_4x1_dut1(
+
+    Mux_8x1 mux_8x1_dut1(
         .i_a(w_msec1),
         .i_b(w_msec10),
         .i_c(w_sec1),
         .i_d(w_sec10),
         .i_select(w_counter),
+        .i_a1(11),
+        .i_b1(11),
+        .i_c1(w_fndDP),
+        .i_d1(11),
         .o_y(w_y1)
     );
 
@@ -88,6 +106,7 @@ module top_TimeClock(
 
     BCDtoFND_Decoder BCDtoFND(
         .i_clockvalue(w_clockvalue),
+        .i_en(i_en),
         .o_fndfont(o_fndfont)
     );
 endmodule
