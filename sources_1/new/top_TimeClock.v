@@ -5,6 +5,7 @@ module top_TimeClock(
     input i_reset,
     input i_mode_SW,
     input i_en,
+    input i_enTriBuff,
 
     output [3:0] o_digitPosition,
     output [7:0] o_fndfont
@@ -33,7 +34,15 @@ module top_TimeClock(
     DecoderFNDDigit Decoder2x4(
         .i_select(w_counter),
         .i_en(i_en),
-        .o_digitPosition(o_digitPosition)
+        .o_digitPosition(w_digitPosition)
+    );
+
+    wire [3:0] w_digitPosition;
+
+    TriBuff TriBuff(
+        .i_x(w_digitPosition),
+        .i_en(i_enTriBuff),
+        .o_y(o_digitPosition)
     );
 
     TimeClockCounter timeclkcnt(
